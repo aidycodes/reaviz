@@ -25,6 +25,7 @@ export interface ChartInternalNestedDataShape {
   key: ChartInternalDataTypes;
   data: ChartInternalShallowDataShape[];
   metadata?: any;
+  urlMap?: Map<string, string>;
   id?: string;
 }
 

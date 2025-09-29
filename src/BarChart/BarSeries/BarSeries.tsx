@@ -128,6 +128,10 @@ export interface BarSeriesProps {
    * adds/removes url onclick handles
    */
   urlEvents: boolean;
+  /**
+   *
+   */
+  urlMap: boolean;
 }
 
 export const BarSeries: FC<Partial<BarSeriesProps>> = (props) => {

@@ -148,9 +148,10 @@ export const RadialBarSeries: FC<Partial<RadialBarSeriesProps>> = ({
             id={`radialbar-${id}-${index}`}
             index={index}
             data={point}
-            clickable={!!urlEvents}
+            clickable={point?.key_url && !!urlEvents}
             onClick={() =>
               urlEvents &&
+              point?.key_url &&
               window.open(point?.key_url, '_blank', 'noopener,noreferrer')
             }
             xScale={xScale}

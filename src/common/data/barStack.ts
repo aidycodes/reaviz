@@ -6,6 +6,7 @@ import {
   normalizeValueForFormatting
 } from './bigInteger';
 import { uniqueBy } from '@/common/utils/array';
+import { buildUrlMap } from '../utils/buildUrlMap';
 
 export type StackTypes = 'default' | 'expand' | 'diverging';
 
@@ -39,6 +40,7 @@ function transformDataToStack(data: ChartNestedDataShape[]) {
       if (idx === -1) {
         result.push({
           metadata: category.metadata,
+          key_url: value.key_url,
           x: category.key,
           formattedValues: {}
         });
@@ -66,7 +68,8 @@ function transformDataToStack(data: ChartNestedDataShape[]) {
  */
 function transformStackToData(
   stackData,
-  direction = 'vertical'
+  direction = 'vertical',
+  urlMap
 ): ChartInternalNestedDataShape[] {
   const result: ChartInternalNestedDataShape[] = [];
   const isVertical = direction === 'vertical';
@@ -93,12 +96,14 @@ function transformStackToData(
       }
 
       const categoryKey = category.key;
+
       const y = point.data[categoryKey];
       const [y0, y1] = point;
 
       result[idx].data.push({
         metadata: point.data.metadata,
         key,
+        key_url: urlMap.get(categoryKey),
         x: isVertical ? categoryKey : y1,
         x0: isVertical ? categoryKey : y0,
         x1: isVertical ? categoryKey : y1,
@@ -126,6 +131,7 @@ export function buildBarStackData(
     (d) => d.data,
     (d) => d.key
   );
+  const urlMap = buildUrlMap(data, true);
   const stackData = transformDataToStack(data);
 
   let stackFn = stack();
@@ -137,5 +143,5 @@ export function buildBarStackData(
 
   const result = stackFn.keys(keys)(stackData);
 
-  return transformStackToData(result, direction);
+  return transformStackToData(result, direction, urlMap);
 }

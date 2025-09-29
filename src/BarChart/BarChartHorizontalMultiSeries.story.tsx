@@ -39,20 +39,11 @@ export default {
   }
 };
 
-const multiCategoryWithUrl = multiCategory.map((x) => ({
-  key_url: x.key,
-  ...x,
-  data: x.data.map((y, i) => ({
-    key_url: `${i}`,
-    ...y
-  }))
-}));
-
 export const Simple = () => (
   <BarChart
     width={500}
     height={350}
-    data={multiCategoryWithUrl}
+    data={multiCategory}
     xAxis={<LinearXAxis type="value" />}
     yAxis={
       <LinearYAxis
@@ -174,6 +165,38 @@ export const StackedNormalized = () => (
             rangeLines={<RangeLines position="top" strokeWidth={3} />}
           />
         }
+      />
+    }
+  />
+);
+
+const multiCategoryWithKeyUrls = multiCategory.map((x) => ({
+  ...x,
+  data: x.data.map((y, i) => ({
+    ...y
+  }))
+}));
+
+export const KeyUrl = () => (
+  <BarChart
+    width={500}
+    height={350}
+    data={multiCategoryWithKeyUrls}
+    xAxis={<LinearXAxis type="value" />}
+    yAxis={
+      <LinearYAxis
+        type="category"
+        tickSeries={<LinearYAxisTickSeries tickSize={20} />}
+      />
+    }
+    series={
+      <BarSeries
+        layout="horizontal"
+        type="grouped"
+        colorScheme={chroma
+          .scale(['ACB7C9', '418AD7'])
+          .colors(multiCategory[0].data.length)}
+        padding={0.8}
       />
     }
   />

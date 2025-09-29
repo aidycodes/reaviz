@@ -47,6 +47,7 @@ export const Simple = () => (
     width={350}
     height={350}
     data={multiCategory}
+    attachUrl="both"
     series={
       <BarSeries
         type="grouped"

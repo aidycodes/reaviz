@@ -47,6 +47,7 @@ export const Simple = () => (
     width={500}
     height={350}
     data={data}
+    attachUrl="both"
     xAxis={<LinearXAxis type="value" />}
     yAxis={
       <LinearYAxis
