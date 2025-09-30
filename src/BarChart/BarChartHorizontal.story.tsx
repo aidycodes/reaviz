@@ -40,7 +40,7 @@ export default {
   }
 };
 
-const data = categoryData;
+const data = categoryData.map((x) => ({ ...x, key_url: 'hi' }));
 
 export const Simple = () => (
   <BarChart
@@ -52,7 +52,17 @@ export const Simple = () => (
     yAxis={
       <LinearYAxis
         type="category"
-        tickSeries={<LinearYAxisTickSeries tickSize={20} />}
+        tickSeries={
+          <LinearYAxisTickSeries
+            tickSize={20}
+            onClick={(e, t) => {
+              const datam = data.find((datam) => datam.key === e.tick);
+              if (datam) {
+                window.open(datam.key_url);
+              }
+            }}
+          />
+        }
       />
     }
     series={

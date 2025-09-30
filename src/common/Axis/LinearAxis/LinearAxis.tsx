@@ -40,6 +40,8 @@ export interface LinearAxisProps {
   orientation?: 'horizontal' | 'vertical';
   urlMap?: Map<string | number, string>;
   onDimensionsChange?: (event: LinearAxisDimensionChanged) => void;
+
+  onClick?: (d: any) => void;
 }
 
 interface LinearAxisState {

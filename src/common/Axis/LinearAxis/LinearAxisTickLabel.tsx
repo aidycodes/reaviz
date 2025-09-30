@@ -15,7 +15,7 @@ export interface LinearAxisTickLabelProps {
   half: 'start' | 'end' | 'center';
   line: ReactElement<LinearAxisTickLineProps, typeof LinearAxisTickLine>;
   format?: (v) => any;
-  onClick?: () => void;
+  onClick?: (e) => void;
   clickable: boolean;
   /**
    * Format tooltip title on hover label.
@@ -177,7 +177,7 @@ export const LinearAxisTickLabel: FC<Partial<LinearAxisTickLabelProps>> = (
       transform={`translate(${x}, ${y})`}
       fontSize={fontSize}
       fontFamily={fontFamily}
-      onClick={() => clickable && onClick()}
+      onClick={(e) => clickable && onClick(e)}
     >
       <title>{titleHover}</title>
       <text

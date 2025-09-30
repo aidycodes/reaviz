@@ -18,6 +18,7 @@ import ellipsize from 'ellipsize';
 import { max } from 'd3-array';
 import { calculateDimensions } from '@/common/utils/size';
 import { mergeDefaultProps } from '@/common/utils';
+import { isDate } from '@/common/utils/buildUrlMap';
 
 export interface LinearAxisTickSeriesProps {
   height: number;
@@ -38,6 +39,7 @@ export interface LinearAxisTickSeriesProps {
    * The maximum length for ellipsizing tick labels. Default is 18.
    */
   ellipsisLength?: number;
+  onClick?: (e: any, tick: any) => void;
 }
 
 interface ProcessedTick {
@@ -49,6 +51,8 @@ interface ProcessedTick {
   width: number;
   half: 'start' | 'end' | 'center';
   url?: string;
+
+  onClick?: (d: any, evt: any) => void;
 }
 
 export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
@@ -66,7 +70,9 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
     line,
     axis,
     ellipsisLength,
-    urlMap
+    urlMap,
+
+    onClick
   } = mergeDefaultProps(LINEAR_AXIS_TICK_SERIES_DEFAULT_PROPS, props);
 
   const labelProps = useMemo(
@@ -130,7 +136,19 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
   /**
    * Gets the url from the map *if any* of the tick.
    */
-  const getUrl = useCallback((tick: number) => urlMap?.get(tick), [urlMap]);
+  const getUrl = useCallback(
+    (tick: any) => {
+      if (!tick) return;
+      if (typeof tick === 'string') {
+        return urlMap?.get(tick);
+      } else if (isDate(tick)) {
+        console.log(tick, 'zz');
+        console.log(tick.getTime(), 'zz');
+        return urlMap?.get(tick?.getTime());
+      }
+    },
+    [urlMap]
+  );
 
   /**
    * Gets the ticks given the dimensions and scales and returns
@@ -143,8 +161,7 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
     const adjustedScale = getAdjustedScale();
     const format = labelFormatFn;
     const midpoint = dimension / 2;
-
-    return ticks.map((tick) => {
+    return ticks.map((tick, i) => {
       const fullText = format(tick);
       const url = urlMap ? getUrl(tick) : undefined;
       const scaledTick = adjustedScale(tick);
@@ -163,6 +180,8 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
         ...size,
         text,
         url,
+        tick,
+        index: i,
         fullText,
         half:
           scaledTick === midpoint
@@ -185,7 +204,9 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
     labelFormatFn,
     scale,
     tickSize,
-    tickValues
+    tickValues,
+    urlMap,
+    getUrl
   ]);
 
   /**
@@ -237,10 +258,8 @@ export const LinearAxisTickSeries: FC<Partial<LinearAxisTickSeriesProps>> = (
               text={tick.text}
               fullText={tick.fullText}
               half={tick.half}
-              onClick={() =>
-                window.open(tick?.url, '_blank', 'noopener,noreferrer')
-              }
-              clickable={!!tick?.url}
+              onClick={(evt) => onClick?.(tick, evt)}
+              clickable={true}
               angle={angle}
               orientation={orientation}
               line={line!}

@@ -47,6 +47,7 @@ import {
 } from '@/common/containers/ChartContainer';
 import { CloneElement } from 'reablocks';
 import { mergeDefaultProps } from '@/common';
+import { buildUrlMap } from '@/common/utils/buildUrlMap';
 
 export interface AreaChartProps extends ChartProps {
   /**
@@ -88,6 +89,13 @@ export interface AreaChartProps extends ChartProps {
    * Any secondary axis components. Useful for multi-axis charts.
    */
   secondaryAxis?: ReactElement<LinearAxisProps, typeof LinearAxis>[];
+
+  /**
+   * Determines which chart elements (axis or none)
+   * should get an onClick event that opens the `key_url` of the data node.
+   */
+
+  attachUrl?: 'none' | 'axis';
 }
 
 export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
@@ -105,7 +113,8 @@ export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
     gridlines,
     brush,
     zoomPan,
-    secondaryAxis
+    secondaryAxis,
+    attachUrl = 'axis'
   } = mergeDefaultProps(AREA_CHART_DEFAULT_PROPS, props);
 
   const zoom: any = zoomPan ? zoomPan.props : {};
@@ -209,6 +218,8 @@ export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
     [zoomControlled]
   );
 
+  const urlMap = buildUrlMap(data, isMultiSeries);
+
   const renderChart = useCallback(
     ({
       chartHeight,
@@ -240,6 +251,7 @@ export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
             scale={xScale}
             visibility={chartSized ? 'visible' : 'hidden'}
             onDimensionsChange={(event) => updateAxes('horizontal', event)}
+            urlMap={urlMap}
           />
           <CloneElement<LinearAxisProps>
             element={yAxis}
@@ -248,6 +260,7 @@ export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
             scale={yScale}
             visibility={chartSized ? 'visible' : 'hidden'}
             onDimensionsChange={(event) => updateAxes('vertical', event)}
+            urlMap={urlMap}
           />
           {secondaryAxis &&
             secondaryAxis.map((axis, i) => (
@@ -258,6 +271,7 @@ export const AreaChart: FC<Partial<AreaChartProps>> = (props) => {
                 width={chartWidth}
                 visibility={chartSized ? 'visible' : 'hidden'}
                 onDimensionsChange={(event) => updateAxes('horizontal', event)}
+                urlMap={urlMap}
               />
             ))}
           {chartSized && (

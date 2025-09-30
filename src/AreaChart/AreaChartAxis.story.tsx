@@ -34,6 +34,9 @@ export default {
   }
 };
 
+const arr = singleDateData.map((x) => ({ ...x, key_url: `${x.key}` }));
+console.log(arr);
+
 export const TopBottomAxis = () => {
   const scale = getXScale({
     type: 'category',
@@ -58,7 +61,7 @@ export const TopBottomAxis = () => {
       width={450}
       height={200}
       margins={0}
-      data={singleDateData}
+      data={arr}
       xAxis={
         <LinearXAxis
           type="time"
